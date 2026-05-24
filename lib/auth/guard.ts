@@ -1,5 +1,21 @@
+import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth/session";
+
+export async function requirePageAuth() {
+  const session = await getServerSession();
+
+  if (!session?.user?.id) {
+    redirect("/admin/login");
+  }
+
+  const role = session.user.role;
+  if (role !== "ADMIN" && role !== "EDITOR") {
+    redirect("/admin/login");
+  }
+
+  return session;
+}
 
 export async function requireAuth() {
   const session = await getServerSession();
