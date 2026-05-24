@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum AgentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum SocialPostStatus {
+  DRAFT
+  SCHEDULED
+  POSTED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Course {
+  id          String    @id @default(cuid())
+  title       String
+  titleEn     String?
+  slug        String    @unique
+  description String
+  thumbnail   String?
+  order       Int       @default(0)
+  published   Boolean   @default(false)
+  chapters    Chapter[]
+  seoMeta     SeoMeta?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Chapter {
+  id          String    @id @default(cuid())
+  title       String
+  titleEn     String?
+  slug        String    @unique
+  description String?
+  order       Int       @default(0)
+  published   Boolean   @default(false)
+  courseId    String
+  course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  topics      Topic[]
+  seoMeta     SeoMeta?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Topic {
+  id        String     @id @default(cuid())
+  title     String
+  titleEn   String?
+  slug      String     @unique
+  order     Int        @default(0)
+  published Boolean    @default(false)
+  chapterId String
+  chapter   Chapter    @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  subtopics Subtopic[]
+  seoMeta   SeoMeta?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Subtopic {
+  id            String    @id @default(cuid())
+  title         String
+  titleEn       String?
+  slug          String    @unique
+  order         Int       @default(0)
+  published     Boolean   @default(false)
+  whatIsIt      String?   @db.Text
+  whyItMatters  String?   @db.Text
+  howItWorks    String?   @db.Text
+  mathBehindIt  String?   @db.Text
+  realWorldEx   String?   @db.Text
+  codeExample   String?   @db.Text
+  codeLanguage  String?   @default("python")
+  applications  String?   @db.Text
+  hook          String?   @db.Text
+  analogy       String?   @db.Text
+  commonMistakes String?  @db.Text
+  comparison    String?   @db.Text
+  quickSummary  String?   @db.Text
+  quizData      String?   @db.Text
+  aiGenerated   Boolean      @default(false)
+  aiGeneratedAt DateTime?
+  faqData       String?      @db.Text
+  topicId       String
+  topic         Topic        @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  seoMeta       SeoMeta?
+  socialPosts   SocialPost[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model SeoMeta {
+  id           String    @id @default(cuid())
+  metaTitle    String?
+  metaDesc     String?
+  keywords     String?
+  ogTitle      String?
+  ogDesc       String?
+  ogImage      String?
+  canonicalUrl String?
+  courseId     String?   @unique
+  course       Course?   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapterId    String?   @unique
+  chapter      Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  topicId      String?   @unique
+  topic        Topic?    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  subtopicId   String?   @unique
+  subtopic     Subtopic? @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model AgentLog {
+  id         String      @id @default(cuid())
+  subtopicId String?
+  prompt     String      @db.Text
+  response   String      @db.Text
+  model      String
+  status     AgentStatus @default(PENDING)
+  errorMsg   String?
+  warningMsg String?
+  createdAt  DateTime    @default(now())
+}
+
+model SocialPost {
+  id          String           @id @default(cuid())
+  subtopicId  String           @unique
+  subtopic    Subtopic         @relation(fields: [subtopicId], references: [id], onDelete: Cascade)
+  facebook    String?          @db.Text
+  instagram   String?          @db.Text
+  twitter     String?          @db.Text
+  youtube     String?          @db.Text
+  linkedin    String?          @db.Text
+  generatedAt DateTime         @default(now())
+  postedAt    DateTime?
+  status      SocialPostStatus @default(DRAFT)
+}

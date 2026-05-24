@@ -1,0 +1,38 @@
+:root {
+  /* Layout */
+  --header-height: 7.25rem; /* 116px — Nastaliq + logo need generous vertical space */
+
+  /* Brand */
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-accent: #7c3aed;
+  --color-success: #059669;
+
+  /* Surfaces */
+  --color-surface: #f8fafc;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+
+  /* Text */
+  --color-text-primary: #0f172a;
+  --color-text-body: #334155;
+  --color-text-muted: #64748b;
+
+  /* Gradients (section backgrounds) */
+  --gradient-blue-violet: linear-gradient(to bottom, #eff6ff, #f5f3ff);
+  --gradient-teal-blue: linear-gradient(to bottom, #f0fdfa, #eff6ff);
+  --gradient-amber-orange: linear-gradient(to bottom, #fffbeb, #fff7ed);
+}
+
+.dark {
+  --color-surface: #0f172a;
+  --color-card: #1e293b;
+  --color-border: #334155;
+  --color-text-primary: #f1f5f9;
+  --color-text-body: #cbd5e1;
+  --color-text-muted: #94a3b8;
+
+  --gradient-blue-violet: linear-gradient(to bottom, #0f172a, #1e1b4b);
+  --gradient-teal-blue: linear-gradient(to bottom, #0f172a, #172554);
+  --gradient-amber-orange: linear-gradient(to bottom, #1c1917, #1c1917);
+}

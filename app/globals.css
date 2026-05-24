@@ -1,26 +1,93 @@
-@import "tailwindcss";
+@import "../styles/tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .dark .scrollbar-thin {
+    scrollbar-color: #475569 transparent;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #475569;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    @apply bg-surface text-text-body font-urdu antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-text-primary;
+  }
+}
+
+@layer components {
+  /* Nastaliq needs generous line-height — never use leading-tight on large headings */
+  .hero-title-line {
+    @apply block font-bold text-slate-900 dark:text-slate-100;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.85;
+    letter-spacing: 0;
+  }
+
+  .hero-title-accent {
+    @apply mt-3 block font-bold;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.85;
+    color: #2563eb;
+  }
+
+  .dark .hero-title-accent {
+    color: #93c5fd;
+  }
+
+  .section-title-urdu {
+    @apply font-bold text-slate-900 dark:text-slate-100;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    line-height: 1.75;
+  }
+
+  .body-urdu-comfort {
+    @apply text-lg leading-[2] text-slate-600 dark:text-slate-300;
+  }
+
+  /* Navbar / compact UI — Nastaliq needs extra leading or glyphs clip */
+  .nav-text-urdu {
+    @apply font-urdu leading-[1.85];
+    padding-block: 0.1875rem;
+  }
+
+  .nav-brand-title {
+    @apply font-urdu text-base font-bold text-slate-900 dark:text-white;
+    line-height: 2.5rem;
+  }
+
+  .nav-brand-subtitle {
+    @apply font-urdu text-xs font-normal text-slate-500 dark:text-slate-400;
+    line-height: 1.75rem;
+  }
 }
