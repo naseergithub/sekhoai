@@ -1,3 +1,4 @@
+import { safeJsonParse } from "@/lib/ai/safeJsonParse";
 import type { QuizQuestion } from "@/types";
 
 const REQUIRED_STRING_FIELDS = [
@@ -53,23 +54,7 @@ export type AgentContentResult = {
   keywords: string;
 };
 
-export function cleanJsonResponse(raw: string): string {
-  let cleaned = raw.trim();
-
-  if (cleaned.startsWith("```")) {
-    cleaned = cleaned
-      .replace(/^```(?:json)?\s*/i, "")
-      .replace(/\s*```\s*$/i, "")
-      .trim();
-  }
-
-  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    cleaned = jsonMatch[0];
-  }
-
-  return cleaned;
-}
+export { cleanJsonResponse } from "@/lib/ai/safeJsonParse";
 
 /** Gemini sometimes returns arrays/objects — normalize to plain strings. */
 function coerceToString(value: unknown, field: string): string {
@@ -104,7 +89,7 @@ function parseQuizField(value: unknown): QuizQuestion[] {
   }
   if (typeof value === "string") {
     try {
-      value = JSON.parse(value);
+      value = safeJsonParse<unknown>(value);
     } catch {
       throw new Error("Invalid field type: quiz");
     }
@@ -139,14 +124,12 @@ function parseQuizField(value: unknown): QuizQuestion[] {
 }
 
 export function parseAgentJsonResponse(raw: string): AgentContentResult {
-  const cleaned = cleanJsonResponse(raw);
-
   let parsed: Record<string, unknown>;
   try {
-    parsed = JSON.parse(cleaned) as Record<string, unknown>;
+    parsed = safeJsonParse<Record<string, unknown>>(raw);
   } catch (err) {
     console.error("Gemini parse error:", err);
-    console.error("Raw response:", raw);
+    console.error("Raw response (first 2000 chars):", raw.slice(0, 2000));
     const message = err instanceof Error ? err.message : "Invalid JSON";
     throw new Error(`AI response parsing failed: ${message}`);
   }

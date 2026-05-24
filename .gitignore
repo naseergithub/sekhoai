@@ -20,6 +20,10 @@
 # production
 /build
 
+# local import data (keep folder, ignore large CSVs)
+/data/*.csv
+/data/split/
+
 # misc
 .DS_Store
 *.pem
